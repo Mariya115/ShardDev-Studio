@@ -50,7 +50,7 @@ export function TransactionChecker() {
     }
   }
 
-  const handleCheckRisk = async (address = transaction.address, amountInput = parseFloat(transaction.amount)) => {
+  const handleCheckRisk = async (address = null, amountInput = null) => {
     setLoading(true)
     setError(null)
     setSuccess(false)
@@ -198,7 +198,7 @@ export function TransactionChecker() {
             </div>
 
             <button
-              onClick={handleCheckRisk}
+              onClick={() => handleCheckRisk()}
               disabled={loading || !transaction.address || !transaction.amount}
               className="w-full px-6 py-3 rounded-lg bg-accent text-zinc-950 font-semibold hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition"
             >
