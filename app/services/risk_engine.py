@@ -1,43 +1,43 @@
-from typing import Dict, Any
+from typing import Any, Dict, List
+
+
+def _is_invalid_address(address: str) -> bool:
+    if not address or not isinstance(address, str):
+        return True
+    return not (address.startswith("0x") and len(address) == 42)
 
 
 def analyze_risk(address: str, amount: float) -> Dict[str, Any]:
-    """Analyze transaction risk based on simple rule engine.
-
-    Args:
-        address: Wallet address being evaluated.
-        amount: Transaction amount.
-
-    Returns:
-        A dict with risk, score, reasons, and recommendation.
-    """
     score = 0
-    reasons = []
+    reasons: List[str] = []
 
     if amount > 1.0:
         score += 50
-        reasons.append("Transaction amount exceeds 1.0")
+        reasons.append("Large transaction amount")
     elif amount > 0.5:
         score += 30
-        reasons.append("Transaction amount exceeds 0.5")
+        reasons.append("Moderate transaction amount")
 
-    if not address.startswith("0x") or len(address) != 42:
+    if _is_invalid_address(address):
         score += 40
-        reasons.append("Invalid address format")
+        reasons.append("Invalid wallet address format")
 
     if address.lower() == "0x0000000000000000000000000000000000000000":
         score += 80
-        reasons.append("Blackhole address detected")
+        reasons.append("Null/burn address detected")
 
-    if score > 70:
+    if score >= 70:
         risk = "HIGH"
-        recommendation = "Do NOT proceed"
-    elif score > 30:
+        recommendation = "Block transaction and escalate for manual review"
+    elif score >= 40:
         risk = "MEDIUM"
-        recommendation = "Proceed with caution"
+        recommendation = "Proceed with caution after verification"
     else:
         risk = "LOW"
-        recommendation = "Safe transaction"
+        recommendation = "Safe to proceed"
+
+    if not reasons:
+        reasons.append("No major risk indicators found")
 
     return {
         "risk": risk,

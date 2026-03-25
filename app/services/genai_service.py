@@ -1,61 +1,53 @@
 import os
-from typing import Dict, List
-from openai import OpenAI
+from typing import Any, Dict
 
-api_key = os.getenv("OPENAI_API_KEY")
-client = OpenAI(api_key=api_key) if api_key else None
+try:
+	from openai import OpenAI
+except Exception:
+	OpenAI = None
 
 
-def generate_explanation_llm(
-    address: str,
-    amount: float,
-    risk: str,
-    score: int,
-    reasons: List[str],
-) -> Dict[str, str]:
-    """Generate explanation, advice, and summary using OpenAI LLM with safe fallback."""
-    system_prompt = (
-        "You are a blockchain security expert. "
-        "Explain transaction risks clearly and give actionable advice."
-    )
+def _fallback_explanation(payload: Dict[str, Any]) -> Dict[str, str]:
+	risk = payload.get("risk", "UNKNOWN")
+	score = payload.get("score", 0)
+	reasons = payload.get("reasons", [])
+	reason_text = ", ".join(reasons) if reasons else "no significant factors"
 
-    user_prompt = f"""
-Address: {address}
-Amount: {amount}
-Risk: {risk}
-Score: {score}
-Reasons: {', '.join(reasons)}
+	return {
+		"explanation": f"Risk level is {risk} with score {score}. Key factors: {reason_text}.",
+		"advice": "Verify recipient, send a small test amount first, and avoid unknown addresses.",
+		"risk_summary": f"{risk} risk transaction.",
+	}
 
-Provide:
-1. Explanation
-2. Advice
-3. Risk summary
-"""
 
-    try:
-        if client is None:
-            raise Exception("OpenAI API key not configured")
-        
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-            temperature=0.3,
-        )
+def generate_ai_explanation(payload: Dict[str, Any]) -> Dict[str, str]:
+	api_key = os.getenv("OPENAI_API_KEY")
+	if not api_key or OpenAI is None:
+		return _fallback_explanation(payload)
 
-        text = response.choices[0].message.content.strip()
+	try:
+		client = OpenAI(api_key=api_key)
+		prompt = (
+			"You are a blockchain security analyst. Explain the transaction risk briefly and clearly. "
+			f"Input data: {payload}"
+		)
+		response = client.chat.completions.create(
+			model="gpt-4o-mini",
+			messages=[
+				{"role": "system", "content": "You are concise and practical."},
+				{"role": "user", "content": prompt},
+			],
+			temperature=0.2,
+		)
+		text = (response.choices[0].message.content or "").strip()
+		if not text:
+			return _fallback_explanation(payload)
 
-        return {
-            "explanation": text,
-            "advice": "Follow AI recommendation carefully",
-            "risk_summary": risk,
-        }
+		return {
+			"explanation": text,
+			"advice": "Follow wallet safety checks before approving the transaction.",
+			"risk_summary": f"{payload.get('risk', 'UNKNOWN')} risk transaction.",
+		}
+	except Exception:
+		return _fallback_explanation(payload)
 
-    except Exception:
-        return {
-            "explanation": f"Transaction risk is {risk}. Reasons: {', '.join(reasons)}",
-            "advice": "Proceed carefully",
-            "risk_summary": risk,
-        }

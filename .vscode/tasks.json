@@ -1,0 +1,62 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Start FastAPI Backend",
+			"type": "shell",
+			"command": "cd /d c:\\Users\\Dell\\ShardDev-Studio && python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload",
+			"args": [],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Backend Uvicorn Run",
+			"type": "shell",
+			"command": "python -m uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload",
+			"isBackground": true
+		},
+		{
+			"label": "Backend Health Check",
+			"type": "shell",
+			"command": "python -c \"import urllib.request;print(urllib.request.urlopen('http://127.0.0.1:8000/analytics/stats').read().decode())\"",
+			"isBackground": false
+		},
+		{
+			"label": "Check Analytics Stats Endpoint",
+			"type": "shell",
+			"command": "Invoke-RestMethod -Uri 'http://127.0.0.1:8000/analytics/stats' -Method GET | ConvertTo-Json -Depth 5",
+			"isBackground": false
+		},
+		{
+			"label": "Check Logs Endpoint",
+			"type": "shell",
+			"command": "Invoke-RestMethod -Uri 'http://127.0.0.1:8000/logs' -Method GET | ConvertTo-Json -Depth 5",
+			"isBackground": false
+		},
+		{
+			"label": "Recheck Logs Endpoint",
+			"type": "shell",
+			"command": "Invoke-RestMethod -Uri 'http://127.0.0.1:8000/logs' -Method GET | ConvertTo-Json -Depth 5",
+			"isBackground": false
+		},
+		{
+			"label": "Check Logs Endpoint 2",
+			"type": "shell",
+			"command": "Invoke-RestMethod -Uri 'http://127.0.0.1:8000/logs' -Method GET | ConvertTo-Json -Depth 5",
+			"isBackground": false
+		},
+		{
+			"label": "Check Stats Endpoint 2",
+			"type": "shell",
+			"command": "Invoke-RestMethod -Uri 'http://127.0.0.1:8000/analytics/stats' -Method GET | ConvertTo-Json -Depth 5",
+			"isBackground": false
+		},
+		{
+			"label": "Install Client Dependencies",
+			"type": "shell",
+			"command": "cd client && npm install",
+			"isBackground": false
+		}
+	]
+}

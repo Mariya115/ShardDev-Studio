@@ -15,7 +15,7 @@ const items = [
     label: 'Security Analysis',
     icon: (
       <svg className="size-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" aria-hidden>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 3l7.5 3v6c0 4.97-3.19 8.98-7.5 10.5C7.69 20.98 4.5 16.97 4.5 12V6L12 3z" />
       </svg>
     ),
   },
@@ -24,7 +24,7 @@ const items = [
     label: 'Analytics',
     icon: (
       <svg className="size-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" aria-hidden>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 014.125 21v-6.75zm0-5.25c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V12c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 013 12v-5.25zm7.5 5.25c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v6.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125v-6.75zm7.5 0c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v6.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125v-6.75z" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v17.25h16.5M7.5 15v-3m4.5 3V9m4.5 6V6" />
       </svg>
     ),
   },

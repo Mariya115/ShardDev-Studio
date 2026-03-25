@@ -1,49 +1,26 @@
-from typing import Dict
-from app.db import SessionLocal
-from app.models.transaction import TransactionLog
+from typing import Any, Dict
 
 
-def agent_decision(risk: str, score: int, address: str, amount: float) -> Dict[str, object]:
-    """Make a smarter agent decision using risk, amount, and frequency."""
-    risk_upper = risk.upper()
+def get_agent_decision(risk: str, score: int) -> Dict[str, Any]:
+	normalized_risk = (risk or "").upper()
 
-    db = SessionLocal()
-    try:
-        frequency = 0
-        if address:
-            frequency = db.query(TransactionLog).filter(TransactionLog.address == address).count()
-    finally:
-        db.close()
+	if normalized_risk == "HIGH" or score >= 70:
+		return {
+			"decision": "REJECT",
+			"confidence": 92,
+			"reasoning": "High risk score indicates strong fraud/security signals.",
+		}
 
-    if score > 70:
-        decision = "BLOCK"
-    elif score > 30:
-        decision = "REVIEW"
-    else:
-        decision = "APPROVE"
+	if normalized_risk == "MEDIUM" or score >= 40:
+		return {
+			"decision": "REVIEW",
+			"confidence": 76,
+			"reasoning": "Moderate risk requires additional verification before execution.",
+		}
 
-    if risk_upper == "HIGH":
-        confidence = 90
-    elif risk_upper == "MEDIUM":
-        confidence = 75
-    else:
-        confidence = 95
+	return {
+		"decision": "APPROVE",
+		"confidence": 95,
+		"reasoning": "Low risk profile detected with minimal threat indicators.",
+	}
 
-    if amount > 5.0 and decision == "APPROVE":
-        decision = "REVIEW"
-        confidence = min(90, confidence)
-
-    if frequency > 5 and decision == "APPROVE":
-        decision = "REVIEW"
-        confidence = 70
-
-    reasoning = (
-        f"risk={risk_upper}, score={score}, amount={amount}, frequency={frequency}. "
-        f"Final decision={decision}, confidence={confidence}."
-    )
-
-    return {
-        "decision": decision,
-        "confidence": confidence,
-        "reasoning": reasoning,
-    }

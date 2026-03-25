@@ -3,6 +3,7 @@ import {
   checkRisk,
   getAIExplanation,
   getAgentDecision,
+  postLog,
 } from '../services/api'
 
 export function TransactionChecker() {
@@ -92,6 +93,15 @@ export function TransactionChecker() {
         risk: riskRes,
         ai: aiRes,
         decision: agentRes,
+      })
+
+      await postLog({
+        address: selectedAddress,
+        amount,
+        risk: riskRes.risk,
+        score: riskRes.score,
+        decision: agentRes.decision,
+        tx_status: 'ANALYZED',
       })
 
       setSuccess(true)

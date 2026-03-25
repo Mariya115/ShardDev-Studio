@@ -4,6 +4,8 @@ import {
   CONTRACT_TEMPLATE_LABELS,
   CONTRACT_TEMPLATES,
 } from '../data/contractTemplates'
+import { SolidityEditor } from '../components/SolidityEditor'
+import { compileContracts } from '../services/api'
 import { useDeployments } from '../hooks/useDeployments'
 
 function deployDelayMs() {
@@ -34,6 +36,8 @@ export function Playground() {
   const [templateId, setTemplateId] = useState('counter')
   const [source, setSource] = useState(() => CONTRACT_TEMPLATES.counter)
   const [deploying, setDeploying] = useState(false)
+  const [compiling, setCompiling] = useState(false)
+  const [compileResult, setCompileResult] = useState(null)
   const [lastResult, setLastResult] = useState(null)
   const [toast, setToast] = useState(null)
   const [copied, setCopied] = useState(false)
@@ -64,6 +68,25 @@ export function Playground() {
   const applyTemplate = (id) => {
     setTemplateId(id)
     setSource(CONTRACT_TEMPLATES[id])
+  }
+
+  const compile = async () => {
+    setCompiling(true)
+    setCompileResult(null)
+    try {
+      const result = await compileContracts()
+      setCompileResult(result)
+      setToast({
+        title: result.success ? 'Compilation successful' : 'Compilation failed',
+        body: result.success ? 'Contracts compiled with Hardhat.' : 'Fix errors shown in output panel.',
+        error: !result.success,
+      })
+    } catch (error) {
+      setCompileResult({ success: false, stdout: '', stderr: String(error) })
+      setToast({ title: 'Compilation failed', body: 'Backend compile endpoint is unavailable.', error: true })
+    } finally {
+      setCompiling(false)
+    }
   }
 
   const copyAddress = async () => {
@@ -176,8 +199,23 @@ export function Playground() {
             </label>
             <button
               type="button"
+              onClick={compile}
+              disabled={deploying || compiling}
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-border-subtle bg-surface-elevated px-5 py-2.5 text-sm font-semibold text-zinc-100 shadow-sm transition-all hover:bg-zinc-800 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-55 disabled:active:scale-100"
+            >
+              {compiling ? (
+                <>
+                  <Spinner className="size-4" />
+                  Compiling…
+                </>
+              ) : (
+                'Compile'
+              )}
+            </button>
+            <button
+              type="button"
               onClick={deploy}
-              disabled={deploying}
+              disabled={deploying || compiling}
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-accent px-5 py-2.5 text-sm font-semibold text-zinc-950 shadow-sm transition-all hover:opacity-95 hover:shadow-md active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-55 disabled:active:scale-100"
             >
               {deploying ? (
@@ -219,14 +257,10 @@ export function Playground() {
             </span>
           </div>
           <div className="relative min-h-0 flex-1">
-            <textarea
+            <SolidityEditor
               value={source}
-              onChange={(e) => setSource(e.target.value)}
-              disabled={deploying}
-              spellCheck={false}
-              className="absolute inset-0 size-full resize-none border-0 bg-zinc-950/50 p-5 font-mono text-[13px] leading-[1.65] text-zinc-200 caret-accent outline-none transition-[opacity,background-color] duration-200 placeholder:text-zinc-700 focus:ring-0 disabled:cursor-wait disabled:bg-zinc-950/30 disabled:opacity-75"
-              placeholder="// SPDX-License-Identifier: MIT&#10;pragma solidity ^0.8.20;&#10;&#10;contract MyContract { }"
-              aria-label="Solidity source"
+              onChange={setSource}
+              disabled={deploying || compiling}
             />
 
             {deploying && (
@@ -249,10 +283,21 @@ export function Playground() {
 
         <aside className="flex w-full shrink-0 flex-col border-t border-border-subtle bg-surface lg:w-[420px] lg:border-t-0 lg:border-l">
           <div className="border-b border-border-subtle px-4 py-2.5">
-            <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Deployment output</h2>
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-zinc-500">Compilation & Deployment</h2>
           </div>
 
           <div className="flex flex-1 flex-col p-5">
+            {compileResult && (
+              <div className="mb-4 rounded-xl border border-border-subtle bg-surface-elevated p-4">
+                <p className="text-xs font-medium uppercase tracking-wider text-zinc-500">Compile status</p>
+                <p className={`mt-2 text-sm font-semibold ${compileResult.success ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {compileResult.success ? 'Success' : 'Failed'}
+                </p>
+                <pre className="mt-3 max-h-40 overflow-auto rounded-md bg-zinc-950/60 p-3 text-xs text-zinc-300">
+                  {(compileResult.stderr || compileResult.stdout || 'No output').slice(0, 3000)}
+                </pre>
+              </div>
+            )}
             {deploying && (
               <div className="flex flex-1 flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-accent/30 bg-accent-muted/20 px-6 py-12 text-center transition-colors duration-300">
                 <Spinner className="size-12 text-accent" />

@@ -1,6 +1,6 @@
 # Test OpenAI Integration with Guardian AI Wallet
 
-$env:OPENAI_API_KEY = "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"
+$env:OPENAI_API_KEY = "<your_openai_api_key>"
 
 Write-Host "================================" -ForegroundColor Cyan
 Write-Host "OpenAI Integration Test" -ForegroundColor Green

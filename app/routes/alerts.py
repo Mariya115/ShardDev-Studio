@@ -6,6 +6,4 @@ router = APIRouter(prefix="/alerts", tags=["alerts"])
 
 @router.get("")
 async def read_alerts() -> dict:
-    """Return current alerts."""
-    alerts = get_alerts()
-    return {"alerts": alerts}
+    return {"alerts": get_alerts()}

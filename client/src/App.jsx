@@ -15,10 +15,10 @@ export default function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
-            <Route path="playground" element={<Playground />} />
-            <Route path="debugger" element={<Debugger />} />
             <Route path="security" element={<SecurityAnalysis />} />
             <Route path="analytics" element={<Analytics />} />
+            <Route path="playground" element={<Playground />} />
+            <Route path="debugger" element={<Debugger />} />
           </Route>
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
