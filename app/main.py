@@ -11,7 +11,14 @@ TransactionLog.metadata.create_all(bind=engine)
 
 app = FastAPI(title="Guardian AI Wallet Backend", version="1.0.0")
 
-origins = ["http://localhost:5173"]
+origins = [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:5175",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5174",
+    "http://127.0.0.1:5175",
+]
 
 app.add_middleware(
     CORSMiddleware,
@@ -24,6 +31,8 @@ app.add_middleware(
 app.include_router(risk.router)
 app.include_router(ai.router)
 app.include_router(agent.router)
+app.include_router(analytics.router)
+app.include_router(alerts.router)
 
 
 @app.get("/", tags=["health"])
