@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
-import { getLogs, getStats, type LogEntry, type AnalyticsStats } from '../services/api'
+import { getLogs, getStats } from '../services/api'
 
 export function Analytics() {
-  const [logs, setLogs] = useState<LogEntry[]>([])
-  const [stats, setStats] = useState<AnalyticsStats | null>(null)
+  const [logs, setLogs] = useState([])
+  const [stats, setStats] = useState(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,7 +32,7 @@ export function Analytics() {
     return () => clearInterval(interval)
   }, [])
 
-  const getRiskBadgeColor = (risk: string) => {
+  const getRiskBadgeColor = (risk) => {
     switch (risk) {
       case 'HIGH':
         return 'bg-red-500/20 text-red-300 border-red-500/30'
@@ -45,7 +45,7 @@ export function Analytics() {
     }
   }
 
-  const getDecisionBadgeColor = (decision: string | null) => {
+  const getDecisionBadgeColor = (decision) => {
     if (!decision) return 'bg-zinc-500/20 text-zinc-300 border-zinc-500/30'
     switch (decision) {
       case 'APPROVE':
@@ -59,7 +59,7 @@ export function Analytics() {
     }
   }
 
-  const formatTimestamp = (timestamp: string) => {
+  const formatTimestamp = (timestamp) => {
     try {
       const date = new Date(timestamp)
       return date.toLocaleString()
@@ -68,7 +68,7 @@ export function Analytics() {
     }
   }
 
-  const shortAddress = (address: string | null) => {
+  const shortAddress = (address) => {
     if (!address) return 'N/A'
     return `${address.slice(0, 6)}...${address.slice(-4)}`
   }

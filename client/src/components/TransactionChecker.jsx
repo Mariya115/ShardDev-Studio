@@ -3,39 +3,25 @@ import {
   checkRisk,
   getAIExplanation,
   getAgentDecision,
-  type RiskResponse,
-  type AIResponse,
-  type AgentResponse,
 } from '../services/api'
 
-interface TransactionState {
-  address: string
-  amount: string
-}
-
-interface ResultsState {
-  risk: RiskResponse | null
-  ai: AIResponse | null
-  decision: AgentResponse | null
-}
-
 export function TransactionChecker() {
-  const [transaction, setTransaction] = useState<TransactionState>({
+  const [transaction, setTransaction] = useState({
     address: '',
     amount: '',
   })
 
-  const [results, setResults] = useState<ResultsState>({
+  const [results, setResults] = useState({
     risk: null,
     ai: null,
     decision: null,
   })
 
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState(null)
   const [success, setSuccess] = useState(false)
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target
     setTransaction((prev) => ({ ...prev, [name]: value }))
     setError(null)
