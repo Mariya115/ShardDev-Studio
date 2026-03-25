@@ -52,6 +52,8 @@ export interface LogEntry {
   risk: string;
   score: number;
   decision: string | null;
+  tx_hash: string | null;
+  tx_status: string | null;
 }
 
 export interface AnalyticsStats {
@@ -154,6 +156,32 @@ export async function getTrends(): Promise<any> {
   } catch (error) {
     console.error("getTrends error:", error);
     throw error;
+  }
+}
+
+/**
+ * Save a transaction log to the backend.
+ */
+export async function postLog(data: {
+  address: string
+  amount: number
+  risk: string
+  score: number
+  decision: string
+  tx_hash?: string
+  status?: string
+}) {
+  try {
+    const res = await fetch(`${BASE_URL}/logs`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    })
+    if (!res.ok) throw new Error(`Post log failed: ${res.statusText}`)
+    return await res.json()
+  } catch (error) {
+    console.error('postLog error:', error)
+    throw error
   }
 }
 

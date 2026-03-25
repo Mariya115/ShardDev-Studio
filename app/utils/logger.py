@@ -1,16 +1,7 @@
 from typing import Any, Dict, List
 from sqlalchemy.exc import SQLAlchemyError
-from sqlalchemy.orm import Session
 from app.db import SessionLocal
 from app.models.transaction import TransactionLog
-
-
-def _get_db() -> Session:
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 
 def log_transaction(data: Dict[str, Any]) -> None:
@@ -23,6 +14,8 @@ def log_transaction(data: Dict[str, Any]) -> None:
             risk=data.get("risk", "UNKNOWN"),
             score=data.get("score", 0),
             decision=data.get("decision"),
+            tx_hash=data.get("tx_hash"),
+            tx_status=data.get("status") or data.get("tx_status"),
         )
         db.add(entry)
         db.commit()
@@ -47,6 +40,8 @@ def get_all_logs() -> List[Dict[str, Any]]:
                 "risk": r.risk,
                 "score": r.score,
                 "decision": r.decision,
+                "tx_hash": r.tx_hash,
+                "tx_status": r.tx_status,
             }
             for r in records
         ]
