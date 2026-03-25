@@ -4,6 +4,8 @@ import { Layout } from './components/Layout'
 import { Dashboard } from './pages/Dashboard'
 import { Playground } from './pages/Playground'
 import { Debugger } from './pages/Debugger'
+import { SecurityAnalysis } from './pages/SecurityAnalysis'
+import { Analytics } from './pages/Analytics'
 
 export default function App() {
   return (
@@ -15,6 +17,8 @@ export default function App() {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="playground" element={<Playground />} />
             <Route path="debugger" element={<Debugger />} />
+            <Route path="security" element={<SecurityAnalysis />} />
+            <Route path="analytics" element={<Analytics />} />
           </Route>
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>

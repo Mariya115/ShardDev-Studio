@@ -11,6 +11,24 @@ const items = [
     ),
   },
   {
+    to: '/security',
+    label: 'Security Analysis',
+    icon: (
+      <svg className="size-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" aria-hidden>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    ),
+  },
+  {
+    to: '/analytics',
+    label: 'Analytics',
+    icon: (
+      <svg className="size-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" aria-hidden>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 014.125 21v-6.75zm0-5.25c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V12c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 013 12v-5.25zm7.5 5.25c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v6.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125v-6.75zm7.5 0c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v6.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125v-6.75z" />
+      </svg>
+    ),
+  },
+  {
     to: '/playground',
     label: 'Playground',
     icon: (
@@ -56,8 +74,8 @@ export function Sidebar() {
           </svg>
         </div>
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold tracking-tight text-zinc-50">ShardDev Studio</p>
-          <p className="truncate text-xs text-zinc-500">Developer workspace</p>
+          <p className="truncate text-sm font-semibold tracking-tight text-zinc-50">Guardian AI</p>
+          <p className="truncate text-xs text-zinc-500">Security Wallet</p>
         </div>
       </div>
 
@@ -72,8 +90,8 @@ export function Sidebar() {
 
       <div className="border-t border-border-subtle p-4">
         <div className="rounded-lg border border-border-subtle bg-surface-elevated p-3">
-          <p className="text-xs font-medium text-zinc-300">Pro workspace</p>
-          <p className="mt-1 text-xs text-zinc-500">Upgrade for team sync &amp; cloud runs.</p>
+          <p className="text-xs font-medium text-zinc-300">AI-Powered Security</p>
+          <p className="mt-1 text-xs text-zinc-500">Blockchain transaction analysis with OpenAI integration.</p>
           <button
             type="button"
             className="mt-3 w-full rounded-md bg-zinc-100 px-3 py-1.5 text-xs font-semibold text-zinc-900 transition hover:bg-white"
