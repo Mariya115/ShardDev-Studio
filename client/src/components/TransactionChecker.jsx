@@ -79,7 +79,7 @@ export function TransactionChecker() {
     }
   }
 
-  const getRiskColor = (risk: string) => {
+  const getRiskColor = (risk) => {
     switch (risk) {
       case 'HIGH':
         return 'text-red-400 bg-red-500/10 border-red-500/30'
@@ -92,7 +92,7 @@ export function TransactionChecker() {
     }
   }
 
-  const getDecisionColor = (decision: string) => {
+  const getDecisionColor = (decision) => {
     switch (decision) {
       case 'APPROVE':
         return 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30'
