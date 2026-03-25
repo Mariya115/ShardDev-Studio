@@ -17,6 +17,9 @@ export function TransactionChecker() {
     decision: null,
   })
 
+  const [connectedAddress, setConnectedAddress] = useState('')
+  const [walletMessage, setWalletMessage] = useState('Not connected')
+
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(false)
@@ -27,30 +30,50 @@ export function TransactionChecker() {
     setError(null)
   }
 
-  const handleCheckRisk = async () => {
+  const connectWallet = async () => {
+    try {
+      if (!window.ethereum) throw new Error('MetaMask is not installed')
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+      if (!accounts || accounts.length === 0) throw new Error('No wallet accounts found')
+
+      const account = accounts[0]
+      setConnectedAddress(account)
+      setWalletMessage('Connected: ' + account)
+      setTransaction((prev) => ({ ...prev, address: account }))
+      if (!transaction.amount) setTransaction((prev) => ({ ...prev, amount: '1.2' }))
+
+      // Immediately run the analysis flow after connection
+      await handleCheckRisk(account, parseFloat(transaction.amount || '1.2'))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to connect wallet')
+      setWalletMessage('Connection failed')
+    }
+  }
+
+  const handleCheckRisk = async (address = transaction.address, amountInput = parseFloat(transaction.amount)) => {
     setLoading(true)
     setError(null)
     setSuccess(false)
 
     try {
-      if (!transaction.address || !transaction.amount) {
+      const selectedAddress = address || transaction.address
+      const amount = Number.isFinite(amountInput) ? amountInput : parseFloat(transaction.amount)
+      if (!selectedAddress || amount === undefined || amount === null || Number.isNaN(amount)) {
         throw new Error('Please enter both address and amount')
       }
-
-      const amount = parseFloat(transaction.amount)
-      if (isNaN(amount) || amount < 0) {
+      if (amount < 0) {
         throw new Error('Invalid amount')
       }
 
       // Step 1: Check Risk
       const riskRes = await checkRisk({
-        address: transaction.address,
+        address: selectedAddress,
         amount: amount,
       })
 
       // Step 2: Get AI Explanation
       const aiRes = await getAIExplanation({
-        address: transaction.address,
+        address: selectedAddress,
         amount: amount,
         risk: riskRes.risk,
         score: riskRes.score,
@@ -61,7 +84,7 @@ export function TransactionChecker() {
       const agentRes = await getAgentDecision({
         risk: riskRes.risk,
         score: riskRes.score,
-        address: transaction.address,
+        address: selectedAddress,
         amount: amount,
       })
 
@@ -137,6 +160,25 @@ export function TransactionChecker() {
                 disabled={loading}
               />
               <p className="mt-1 text-xs text-zinc-500">Enter the recipient wallet address</p>
+
+              <div className="mt-3 flex gap-2">
+                <button
+                  onClick={() => setTransaction((prev) => ({ ...prev, address: '0xBae9ccaE07d6732aDdE7d047C25d7c0b86a9637c', amount: prev.amount || '1.5' }))}
+                  disabled={loading}
+                  className="px-3 py-2 rounded-lg border border-zinc-700 text-sm text-zinc-100 hover:bg-zinc-800 transition"
+                >
+                  Use Sharedum Sample Address
+                </button>
+                <button
+                  onClick={connectWallet}
+                  disabled={loading}
+                  className="px-3 py-2 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-500 transition"
+                >
+                  Connect MetaMask
+                </button>
+              </div>
+
+              <p className="mt-2 text-xs text-zinc-500">{walletMessage}</p>
             </div>
 
             <div>
